@@ -9,7 +9,7 @@ class LedDisplay {
   public:
     LedControl *lc;
   public:
-    LedDisplay(LedControl *r_lc);
+    LedDisplay();
     void clear();
     void push(byte col);
     void render(LedControl *lc);

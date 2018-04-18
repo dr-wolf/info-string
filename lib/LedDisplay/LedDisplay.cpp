@@ -1,8 +1,7 @@
 #include "../LedControl/LedControl.h"
 #include "LedDisplay.h"
 
-LedDisplay::LedDisplay(LedControl *r_lc) {
-  this->lc = r_lc;
+LedDisplay::LedDisplay() {
   for (int i = 0; i < BUFF_SIZE; i++)
     this->buff[i] = 0;
 }
