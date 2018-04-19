@@ -4,13 +4,14 @@
 
 class LedDisplay {
   private:
-    byte buff[BUFF_SIZE];
-    void renderBlock(int block, LedControl *lc);
-  public:
+    bool inversed;
     LedControl *lc;
+    byte buff[BUFF_SIZE];
+    void renderBlock(int block);
   public:
-    LedDisplay();
+    LedDisplay(LedControl *lc);
     void clear();
+    void inverse(bool inversed);
     void push(byte col);
-    void render(LedControl *lc);
+    void render();
 };

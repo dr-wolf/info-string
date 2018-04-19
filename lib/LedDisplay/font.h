@@ -1,4 +1,4 @@
-typedef struct CINFO {
+struct CINFO {
   int  pos;
   int len;
 };
