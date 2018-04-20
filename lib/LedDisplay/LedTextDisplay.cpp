@@ -1,20 +1,37 @@
 #include "LedTextDisplay.h"
 
+struct charmeta {
+  int pos;
+  int len;
+};
+
+int offset(byte c) {
+  int r = 0;
+  while (c >= ramps[r] && r < RAMP_SIZE)
+    r++;
+  return meta[c] + r * 255;
+}
+
+charmeta getMeta(char c) {
+  int p = offset(c);
+  return {p, offset(c + 1) - p};
+}
+
 LedTextDisplay::LedTextDisplay(LedControl *lc): LedDisplay(lc) {}
 
 int LedTextDisplay::textWidth(String text) {
   int text_len = 0;
   for (unsigned int i = 0; i < text.length(); i++)
-    text_len += charmap[text.charAt(i) - 1].len;
+    text_len += getMeta(text.charAt(i) - 1).len;
   return text_len + text.length() - 1;
 }
 
 void LedTextDisplay::scrollText(String text, int timeout) {
   this->clear();
   for (unsigned int i = 0; i < text.length(); i++) {
-    int code = text.charAt(i) - 1;
-    for (int n = 0; n < charmap[code].len; n++) {
-      this->push(font[charmap[code].pos + n]);
+    charmeta cm = getMeta(text.charAt(i) - 1);
+    for (int n = 0; n < cm.len; n++) {
+      this->push(font[cm.pos + n]);
       this->render();
       delay(timeout);
     }
@@ -33,11 +50,11 @@ void LedTextDisplay::printText(String text, bool alignLeft) {
   this->clear();
   int p = 0;
   for (unsigned int i = 0; i < text.length(); i++) {
-    int code = text.charAt(i) - 1;
-    for (int n = 0; n < charmap[code].len; n++) {
+    charmeta cm = getMeta(text.charAt(i) - 1);
+    for (int n = 0; n < cm.len; n++) {
       if (alignLeft && p++ >= 32)
         break;
-      this->push(font[charmap[code].pos + n]);
+      this->push(font[cm.pos + n]);
     }
     if (i < text.length() - 1 && (!alignLeft || p++ < 32))
       this->push(0);
@@ -57,9 +74,9 @@ void LedTextDisplay::printTextMiddle(String text) {
   }
   this->clear();
   for (unsigned int i = 0; i < text.length(); i++) {
-    int code = text.charAt(i) - 1;
-    for (int n = 0; n < charmap[code].len; n++)
-      this->push(font[charmap[code].pos + n]);
+    charmeta cm = getMeta(text.charAt(i) - 1);
+    for (int n = 0; n < cm.len; n++)
+      this->push(font[cm.pos + n]);
     if (i < text.length() - 1)
       this->push(0);
   }
